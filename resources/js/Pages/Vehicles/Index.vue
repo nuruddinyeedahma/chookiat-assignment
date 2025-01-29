@@ -9,6 +9,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
+import InstallmentCalculator from '@/Components/InstallmentCalculator.vue';
 
 const props = defineProps({
     vehicles: Array,
@@ -38,6 +39,8 @@ const editForm = useForm({
 const showingVehicleModal = ref(false);
 const editingVehicle = ref(false);
 const vehicleBeingDeleted = ref(null);
+const showingCalculator = ref(false);
+const selectedVehicle = ref(null);
 
 const createVehicle = () => {
     form.post(route('vehicles.store'), {
@@ -81,6 +84,11 @@ const deleteVehicle = () => {
             vehicleBeingDeleted.value = null;
         },
     });
+};
+
+const showCalculator = (vehicle) => {
+    selectedVehicle.value = vehicle;
+    showingCalculator.value = true;
 };
 </script>
 
@@ -129,6 +137,12 @@ const deleteVehicle = () => {
                                             @click="editVehicle(vehicle)"
                                         >
                                             Edit
+                                        </button>
+                                        <button
+                                            class="text-indigo-600 hover:text-indigo-900 mr-4"
+                                            @click="showCalculator(vehicle)"
+                                        >
+                                            Calculate Installments
                                         </button>
                                         <button
                                             class="text-red-600 hover:text-red-900"
@@ -389,6 +403,26 @@ const deleteVehicle = () => {
                 >
                     Delete
                 </DangerButton>
+            </template>
+        </DialogModal>
+
+        <!-- Installment Calculator Modal -->
+        <DialogModal :show="showingCalculator" @close="showingCalculator = false">
+            <template #title>
+                Calculate Installments for {{ selectedVehicle?.make }} {{ selectedVehicle?.model }}
+            </template>
+
+            <template #content>
+                <InstallmentCalculator
+                    v-if="selectedVehicle"
+                    :initial-amount="selectedVehicle.price"
+                />
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="showingCalculator = false">
+                    Close
+                </SecondaryButton>
             </template>
         </DialogModal>
     </AppLayout>
