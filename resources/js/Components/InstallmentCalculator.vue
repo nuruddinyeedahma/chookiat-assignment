@@ -13,7 +13,7 @@ const props = defineProps({
 });
 
 const loanAmount = ref(props.initialAmount.toString());
-const interestRate = ref('');
+const interestRate = ref(0);
 const selectedInstallment = ref('');
 const error = ref('');
 const calculationType = ref('flat'); // 'flat' or 'amortization'
@@ -24,13 +24,13 @@ const validateLoanAmount = (event) => {
     // Check for invalid characters (- or e) and clear immediately
     if (value.toLowerCase().includes('e') || value.includes('-')) {
         alert('ไม่สามารถป้อนเครื่องหมายลบหรือตัวอักษร');
-        loanAmount.value = '';
-        event.target.value = '';
+        loanAmount.value = 0;
+        event.target.value = 0;
         return;
     }
 
     if (value === '') {
-        loanAmount.value = '';
+        loanAmount.value = 0;
         error.value = '';
         return;
     }
@@ -38,8 +38,8 @@ const validateLoanAmount = (event) => {
     const number = parseFloat(value);
     if (isNaN(number)) {
         alert('กรุณาใส่ตัวเลขเท่านั้น');
-        loanAmount.value = '';
-        event.target.value = '';
+        loanAmount.value = 0;
+        event.target.value = 0;
         return;
     }
 
@@ -52,7 +52,7 @@ const preventInvalidInput = (event) => {
     if (event.key === '-' || event.key.toLowerCase() === 'e') {
         alert('ไม่สามารถป้อนเครื่องหมายลบหรือตัวอักษร');
         event.preventDefault();
-        loanAmount.value = '';
+        loanAmount.value = 0;
     }
 };
 
@@ -62,21 +62,21 @@ const validateInterestRate = (event) => {
     // Check for invalid characters (- or e) and clear immediately
     if (value.toLowerCase().includes('e') || value.includes('-')) {
         alert('ไม่สามารถป้อนเครื่องหมายลบหรือตัวอักษร');
-        interestRate.value = '';
-        event.target.value = '';
+        interestRate.value = 0;
+        event.target.value = 0;
         return;
     }
 
     if (value === '') {
-        interestRate.value = '';
+        interestRate.value = 0;
         return;
     }
 
     const number = parseFloat(value);
     if (isNaN(number)) {
         alert('กรุณาใส่ตัวเลขเท่านั้น');
-        interestRate.value = '';
-        event.target.value = '';
+        interestRate.value = 0;
+        event.target.value = 0;
         return;
     }
 
@@ -88,7 +88,7 @@ const preventInvalidInputInterest = (event) => {
     if (event.key === '-' || event.key.toLowerCase() === 'e') {
         alert('ไม่สามารถป้อนเครื่องหมายลบหรือตัวอักษร');
         event.preventDefault();
-        interestRate.value = '';
+        interestRate.value = 0;
     }
 };
 
@@ -107,7 +107,7 @@ const calculateAmortizationPayment = (principal, annualRate, months) => {
 };
 
 const installmentTable = computed(() => {
-    if (!loanAmount.value || !interestRate.value) return [];
+    // if (!loanAmount.value || !interestRate.value) return []; // ถ้ายังไม่ได้ป้อนจํานวนเงินหรืออัตราดอกเบี้ยหรือเท่ากับ 0
 
     const table = [];
     for (let months = 12; months <= 84; months += 12) {
@@ -137,8 +137,8 @@ const hasInputValues = computed(() => {
 });
 
 const clearForm = () => {
-    loanAmount.value = '';
-    interestRate.value = '';
+    loanAmount.value = 0;
+    interestRate.value = 0;
     selectedInstallment.value = '';
     error.value = '';
 };
