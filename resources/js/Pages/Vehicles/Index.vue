@@ -1,7 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { ref } from 'vue';
-import { useForm } from '@inertiajs/vue3';
+import { useForm, Link } from '@inertiajs/vue3';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import DialogModal from '@/Components/DialogModal.vue';
@@ -12,7 +12,10 @@ import InputError from '@/Components/InputError.vue';
 import InstallmentCalculator from '@/Components/InstallmentCalculator.vue';
 
 const props = defineProps({
-    vehicles: Array,
+    vehicles: {
+        type: Object,
+        required: true,
+    },
 });
 
 const form = useForm({
@@ -124,7 +127,7 @@ const showCalculator = (vehicle) => {
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="vehicle in vehicles" :key="vehicle.id">
+                                <tr v-for="vehicle in vehicles.data" :key="vehicle.id">
                                     <td class="px-6 py-4">{{ vehicle.make }}</td>
                                     <td class="px-6 py-4">{{ vehicle.model }}</td>
                                     <td class="px-6 py-4">{{ vehicle.year }}</td>
@@ -154,6 +157,31 @@ const showCalculator = (vehicle) => {
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="mt-6" v-if="vehicles.last_page > 1">
+                        <div class="flex justify-between items-center">
+                            <div class="text-sm text-gray-700">
+                                แสดง {{ vehicles.from }}-{{ vehicles.to }} จาก {{ vehicles.total }} รายการ
+                            </div>
+                            <div class="flex space-x-2">
+                                <Link
+                                    v-for="page in vehicles.links"
+                                    :key="page.label"
+                                    :href="page.url"
+                                    :class="[
+                                        'px-4 py-2 border rounded-md text-sm',
+                                        page.active
+                                            ? 'bg-indigo-600 text-white border-indigo-600'
+                                            : 'text-gray-700 hover:bg-gray-50',
+                                        !page.url && 'opacity-50 cursor-not-allowed'
+                                    ]"
+                                    v-html="page.label"
+                                    :preserve-scroll="true"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
