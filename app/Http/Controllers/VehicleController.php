@@ -20,7 +20,7 @@ class VehicleController extends Controller
         $validated = $request->validate([
             'make' => 'required|string|max:255',
             'model' => 'required|string|max:255',
-            'year' => 'required|integer|min:max:' . (date('Y') + 1),
+            'year' => 'required|integer|min:1900|max:' . (date('Y') + 1),
             'color' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
