@@ -84,6 +84,22 @@ const deleteUser = () => {
         },
     });
 };
+
+const resetUserData = (user) => {
+    if (confirm('Are you sure you want to reset this user\'s data?')) {
+        form.post(route('users.reset-data', user.id), {
+            preserveScroll: true,
+        });
+    }
+};
+
+const toggleUserStatus = (user) => {
+    if (confirm(`Are you sure you want to ${user.is_active ? 'disable' : 'enable'} this user?`)) {
+        form.put(route('users.toggle-status', user.id), {
+            preserveScroll: true,
+        });
+    }
+};
 </script>
 
 <template>
@@ -130,10 +146,20 @@ const deleteUser = () => {
                                         </button>
                                         <button
                                             v-if="user.id !== props.currentUser.id"
-                                            class="text-red-600 hover:text-red-900"
-                                            @click="confirmUserDeletion(user)"
+                                            class="text-yellow-600 hover:text-yellow-900 mr-4"
+                                            @click="resetUserData(user)"
                                         >
-                                            ลบ
+                                            รีเซ็ตข้อมูล
+                                        </button>
+                                        <button
+                                            v-if="user.id !== props.currentUser.id"
+                                            :class="{
+                                                'text-red-600 hover:text-red-900': user.is_active,
+                                                'text-green-600 hover:text-green-900': !user.is_active
+                                            }"
+                                            @click="toggleUserStatus(user)"
+                                        >
+                                            {{ user.is_active ? 'ปิดการใช้งาน' : 'เปิดการใช้งาน' }}
                                         </button>
                                     </td>
                                 </tr>

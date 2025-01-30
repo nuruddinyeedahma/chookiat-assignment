@@ -30,4 +30,11 @@ Route::middleware([
 
     // Vehicle management routes
     Route::resource('vehicles', VehicleController::class);
+
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+        Route::post('/users/{user}/reset-data', [UserController::class, 'resetUserData'])
+            ->name('users.reset-data');
+        Route::put('/users/{user}/toggle-status', [UserController::class, 'toggleUserStatus'])
+            ->name('users.toggle-status');
+    });
 });

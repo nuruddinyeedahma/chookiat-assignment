@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends BaseController
 {
@@ -74,5 +75,50 @@ class UserController extends BaseController
 
         $user->delete();
         return redirect()->back();
+    }
+
+    // 3.2.1 Reset user data
+    public function resetUserData(User $user)
+    {
+        // Reset user's password to default
+        $user->update([
+            'password' => Hash::make('password123'),
+        ]);
+
+        // Revoke all tokens
+        $user->tokens()->delete();
+
+        // Reset two factor authentication
+        if ($user->two_factor_secret) {
+            $user->forceFill([
+                'two_factor_secret' => null,
+                'two_factor_recovery_codes' => null,
+            ])->save();
+        }
+
+        return redirect()->back()->with('message', 'User data has been reset');
+    }
+
+    // 3.2.2 Disable user login
+    public function toggleUserStatus(User $user)
+    {
+        if ($user->id === Auth::id()) {
+            return redirect()->back()->with('error', 'You cannot disable your own account');
+        }
+
+        $user->update([
+            'is_active' => !$user->is_active
+        ]);
+
+        // If disabling user, logout from all devices
+        if (!$user->is_active) {
+            $user->tokens()->delete();
+            // Force logout from all devices
+            DB::table('sessions')->where('user_id', $user->id)->delete();
+        }
+
+        return redirect()->back()->with('message',
+            $user->is_active ? 'User has been activated' : 'User has been disabled'
+        );
     }
 }
