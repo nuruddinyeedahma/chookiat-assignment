@@ -33,6 +33,24 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
+        // Add custom authentication logic
+        Fortify::authenticateUsing(function (Request $request) {
+            $user = \App\Models\User::where('email', $request->email)->first();
+
+            if ($user &&
+                \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+
+                // Check if user is active
+                if (!$user->is_active) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'email' => ['Your account has been deactivated. Please contact the administrator.']
+                    ]);
+                }
+
+                return $user;
+            }
+        });
+
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
 
