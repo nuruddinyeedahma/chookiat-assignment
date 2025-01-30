@@ -36,12 +36,17 @@ const submit = () => {
 
 <template>
     <div>
-        <Head title="Log in" />
+        <Head title="เข้าสู่ระบบ" />
 
         <AuthenticationCard>
             <template #logo>
                 <AuthenticationCardLogo />
             </template>
+
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-700">ระบบจัดการข้อมูลสินเชื่อรถยนต์</h2>
+                <p class="text-sm text-gray-600">กรุณาเข้าสู่ระบบเพื่อดำเนินการ</p>
+            </div>
 
             <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
                 {{ status }}
@@ -49,7 +54,7 @@ const submit = () => {
 
             <form @submit.prevent="submit">
                 <div>
-                    <InputLabel for="email" value="Email" />
+                    <InputLabel for="email" value="อีเมล" />
                     <TextInput
                         id="email"
                         v-model="form.email"
@@ -63,7 +68,7 @@ const submit = () => {
                 </div>
 
                 <div class="mt-4">
-                    <InputLabel for="password" value="Password" />
+                    <InputLabel for="password" value="รหัสผ่าน" />
                     <TextInput
                         id="password"
                         v-model="form.password"
@@ -78,13 +83,13 @@ const submit = () => {
                 <div class="block mt-4">
                     <label class="flex items-center">
                         <Checkbox v-model:checked="form.remember" name="remember" />
-                        <span class="ms-2 text-sm text-gray-600">Remember me</span>
+                        <span class="ms-2 text-sm text-gray-600">จดจำการเข้าสู่ระบบ</span>
                     </label>
                 </div>
 
                 <div class="mt-4">
                     <PrimaryButton class="w-full justify-center" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                        Log in
+                        เข้าสู่ระบบ
                     </PrimaryButton>
                 </div>
             </form>
@@ -92,11 +97,11 @@ const submit = () => {
             <div class="mt-6 border-t border-gray-200 pt-6">
                 <div class="flex justify-between items-center">
                     <Link v-if="canResetPassword" :href="route('password.request')" class="text-sm text-gray-600 hover:text-gray-900">
-                        Forgot your password?
+                        ลืมรหัสผ่าน?
                     </Link>
 
                     <Link :href="route('register')" class="text-sm text-gray-600 hover:text-gray-900">
-                        Don't have an account?
+                        สมัครสมาชิกใหม่
                     </Link>
                 </div>
             </div>

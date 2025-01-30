@@ -21,15 +21,20 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Forgot Password" />
+    <Head title="ลืมรหัสผ่าน" />
 
     <AuthenticationCard>
         <template #logo>
             <AuthenticationCardLogo />
         </template>
 
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-700">ระบบจัดการข้อมูลรถยนต์</h2>
+            <p class="text-sm text-gray-600">รีเซ็ตรหัสผ่าน</p>
+        </div>
+
         <div class="mb-4 text-sm text-gray-600">
-            Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.
+            หากคุณลืมรหัสผ่าน ไม่ต้องกังวล เพียงกรอกที่อยู่อีเมลของคุณ ระบบจะส่งลิงก์สำหรับรีเซ็ตรหัสผ่านใหม่ไปยังอีเมลของคุณ
         </div>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
@@ -38,7 +43,7 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="Email" />
+                <InputLabel for="email" value="อีเมล" />
                 <TextInput
                     id="email"
                     v-model="form.email"
@@ -53,7 +58,7 @@ const submit = () => {
 
             <div class="flex items-center justify-end mt-4">
                 <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Email Password Reset Link
+                    ส่งลิงก์รีเซ็ตรหัสผ่าน
                 </PrimaryButton>
             </div>
         </form>
