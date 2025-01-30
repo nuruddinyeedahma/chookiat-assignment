@@ -14,8 +14,9 @@ const props = defineProps({
 
 const loanAmount = ref(props.initialAmount.toString());
 const interestRate = ref('');
-const selectedInstallment = ref(null);
+const selectedInstallment = ref('');
 const error = ref('');
+const calculationType = ref('flat'); // 'flat' or 'amortization'
 
 const validateLoanAmount = (value) => {
     if (value === '') {
@@ -24,9 +25,16 @@ const validateLoanAmount = (value) => {
         return;
     }
 
+    // Check if value contains only numbers
+    if (!/^\d*\.?\d*$/.test(value)) {
+        error.value = 'กรุณาใส่ตัวเลขเท่านั้น';
+        loanAmount.value = '';
+        return;
+    }
+
     const number = parseFloat(value);
     if (isNaN(number) || number < 0) {
-        error.value = 'Please enter a valid positive number';
+        alert('กรุณาใส่จำนวนเงินที่มากกว่า 0');
         loanAmount.value = '';
         return;
     }
@@ -35,7 +43,14 @@ const validateLoanAmount = (value) => {
     loanAmount.value = number;
 };
 
-const calculateMonthlyPayment = (principal, annualRate, months) => {
+const calculateFlatRatePayment = (principal, annualRate, months) => {
+    const years = months / 12;
+    const totalInterest = (principal * (annualRate / 100) * years);
+    const totalPayment = principal + totalInterest;
+    return totalPayment / months;
+};
+
+const calculateAmortizationPayment = (principal, annualRate, months) => {
     const monthlyRate = (annualRate / 100) / 12;
     const payment = principal * (monthlyRate * Math.pow(1 + monthlyRate, months)) /
                    (Math.pow(1 + monthlyRate, months) - 1);
@@ -47,11 +62,17 @@ const installmentTable = computed(() => {
 
     const table = [];
     for (let months = 12; months <= 84; months += 12) {
-        const monthlyPayment = calculateMonthlyPayment(
-            parseFloat(loanAmount.value),
-            parseFloat(interestRate.value),
-            months
-        );
+        const monthlyPayment = calculationType.value === 'flat'
+            ? calculateFlatRatePayment(
+                parseFloat(loanAmount.value),
+                parseFloat(interestRate.value),
+                months
+            )
+            : calculateAmortizationPayment(
+                parseFloat(loanAmount.value),
+                parseFloat(interestRate.value),
+                months
+            );
 
         table.push({
             months,
@@ -69,7 +90,7 @@ const hasInputValues = computed(() => {
 const clearForm = () => {
     loanAmount.value = '';
     interestRate.value = '';
-    selectedInstallment.value = null;
+    selectedInstallment.value = '';
     error.value = '';
 };
 </script>
@@ -77,9 +98,9 @@ const clearForm = () => {
 <template>
     <div class="space-y-6">
         <!-- Input Fields -->
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
             <div>
-                <InputLabel for="loan-amount" value="Loan Amount" />
+                <InputLabel for="loan-amount" value="ยอดสินเชื่อ" />
                 <TextInput
                     id="loan-amount"
                     v-model="loanAmount"
@@ -92,7 +113,7 @@ const clearForm = () => {
             </div>
 
             <div>
-                <InputLabel for="interest-rate" value="Interest Rate (%)" />
+                <InputLabel for="interest-rate" value="อัตราดอกเบี้ย (%)" />
                 <TextInput
                     id="interest-rate"
                     v-model="interestRate"
@@ -102,12 +123,52 @@ const clearForm = () => {
                     required
                 />
             </div>
+
+            <div>
+                <InputLabel for="installment-period" value="ระยะเวลาผ่อนชำระ" />
+                <select
+                    id="installment-period"
+                    v-model="selectedInstallment"
+                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                    required
+                >
+                    <option value="">เลือกระยะเวลา</option>
+                    <option v-for="months in [12, 24, 36, 48, 60, 72, 84]" :key="months" :value="months">
+                        {{ months }} งวด ({{ Math.floor(months/12) }} {{ months === 12 ? 'ปี' : 'ปี' }})
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Calculation Type Selection -->
+        <div class="flex items-center space-x-4">
+            <InputLabel value="วิธีการคำนวณ:" class="mb-0" />
+            <div class="flex items-center space-x-2">
+                <input
+                    type="radio"
+                    id="flat-rate"
+                    v-model="calculationType"
+                    value="flat"
+                    class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-full shadow-sm"
+                />
+                <label for="flat-rate" class="text-sm text-gray-700">แบบคงที่</label>
+            </div>
+            <div class="flex items-center space-x-2">
+                <input
+                    type="radio"
+                    id="amortization"
+                    v-model="calculationType"
+                    value="amortization"
+                    class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-full shadow-sm"
+                />
+                <label for="amortization" class="text-sm text-gray-700">แบบลดต้นลดดอก</label>
+            </div>
         </div>
 
         <!-- Clear Button -->
         <div v-if="hasInputValues" class="flex justify-end">
             <PrimaryButton @click="clearForm">
-                Clear
+                ล้างข้อมูล
             </PrimaryButton>
         </div>
 
@@ -116,8 +177,8 @@ const clearForm = () => {
             <table class="min-w-full divide-y divide-gray-200">
                 <thead>
                     <tr>
-                        <th class="px-6 py-3 bg-gray-50 text-left">Number of Installments</th>
-                        <th class="px-6 py-3 bg-gray-50 text-left">Monthly Payment</th>
+                        <th class="px-6 py-3 bg-gray-50 text-left">จำนวนงวด</th>
+                        <th class="px-6 py-3 bg-gray-50 text-left">ค่างวดต่อเดือน</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -131,7 +192,7 @@ const clearForm = () => {
                         @click="selectedInstallment = row.months"
                         class="cursor-pointer"
                     >
-                        <td class="px-6 py-4">{{ row.months }} months</td>
+                        <td class="px-6 py-4">{{ row.months }} งวด</td>
                         <td
                             class="px-6 py-4"
                             :class="{ 'text-red-600': row.isHighPayment }"

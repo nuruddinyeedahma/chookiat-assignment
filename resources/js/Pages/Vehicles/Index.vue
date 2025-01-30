@@ -93,10 +93,10 @@ const showCalculator = (vehicle) => {
 </script>
 
 <template>
-    <AppLayout title="Vehicle Inventory">
+    <AppLayout title="รายการรถยนต์">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Vehicle Inventory
+                รายการรถยนต์
             </h2>
         </template>
 
@@ -105,7 +105,7 @@ const showCalculator = (vehicle) => {
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
                     <div class="flex justify-end mb-6">
                         <PrimaryButton @click="showingVehicleModal = true">
-                            Add Vehicle
+                            เพิ่มรถยนต์
                         </PrimaryButton>
                     </div>
 
@@ -114,13 +114,13 @@ const showCalculator = (vehicle) => {
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead>
                                 <tr>
-                                    <th class="px-6 py-3 bg-gray-50 text-left">Make</th>
-                                    <th class="px-6 py-3 bg-gray-50 text-left">Model</th>
-                                    <th class="px-6 py-3 bg-gray-50 text-left">Year</th>
-                                    <th class="px-6 py-3 bg-gray-50 text-left">Color</th>
-                                    <th class="px-6 py-3 bg-gray-50 text-left">Price</th>
-                                    <th class="px-6 py-3 bg-gray-50 text-left">Stock</th>
-                                    <th class="px-6 py-3 bg-gray-50 text-left">Actions</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-left">ยี่ห้อ</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-left">รุ่น</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-left">ปี</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-left">สี</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-left">ราคา</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-left">จำนวน</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-center">การดำเนินการ</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -134,21 +134,21 @@ const showCalculator = (vehicle) => {
                                     <td class="px-6 py-4">
                                         <button
                                             class="text-indigo-600 hover:text-indigo-900 mr-4"
-                                            @click="editVehicle(vehicle)"
+                                            @click="showCalculator(vehicle)"
                                         >
-                                            Edit
+                                            คำนวณค่างวด
                                         </button>
                                         <button
                                             class="text-indigo-600 hover:text-indigo-900 mr-4"
-                                            @click="showCalculator(vehicle)"
+                                            @click="editVehicle(vehicle)"
                                         >
-                                            Calculate Installments
+                                            แก้ไข
                                         </button>
                                         <button
                                             class="text-red-600 hover:text-red-900"
                                             @click="confirmVehicleDeletion(vehicle)"
                                         >
-                                            Delete
+                                            ลบ
                                         </button>
                                     </td>
                                 </tr>
@@ -162,14 +162,14 @@ const showCalculator = (vehicle) => {
         <!-- Create Vehicle Modal -->
         <DialogModal :show="showingVehicleModal" @close="showingVehicleModal = false">
             <template #title>
-                Add Vehicle
+                เพิ่มรถยนต์
             </template>
 
             <template #content>
                 <div class="space-y-6">
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <div>
-                            <InputLabel for="make" value="Make" />
+                            <InputLabel for="make" value="ยี่ห้อ" />
                             <TextInput
                                 id="make"
                                 v-model="form.make"
@@ -181,7 +181,7 @@ const showCalculator = (vehicle) => {
                         </div>
 
                         <div>
-                            <InputLabel for="model" value="Model" />
+                            <InputLabel for="model" value="รุ่น" />
                             <TextInput
                                 id="model"
                                 v-model="form.model"
@@ -193,7 +193,7 @@ const showCalculator = (vehicle) => {
                         </div>
 
                         <div>
-                            <InputLabel for="year" value="Year" />
+                            <InputLabel for="year" value="ปี" />
                             <TextInput
                                 id="year"
                                 v-model="form.year"
@@ -205,7 +205,7 @@ const showCalculator = (vehicle) => {
                         </div>
 
                         <div>
-                            <InputLabel for="color" value="Color" />
+                            <InputLabel for="color" value="สี" />
                             <TextInput
                                 id="color"
                                 v-model="form.color"
@@ -217,7 +217,7 @@ const showCalculator = (vehicle) => {
                         </div>
 
                         <div>
-                            <InputLabel for="price" value="Price" />
+                            <InputLabel for="price" value="ราคา" />
                             <TextInput
                                 id="price"
                                 v-model="form.price"
@@ -230,7 +230,7 @@ const showCalculator = (vehicle) => {
                         </div>
 
                         <div>
-                            <InputLabel for="stock" value="Stock" />
+                            <InputLabel for="stock" value="จำนวน" />
                             <TextInput
                                 id="stock"
                                 v-model="form.stock"
@@ -243,7 +243,7 @@ const showCalculator = (vehicle) => {
                     </div>
 
                     <div>
-                        <InputLabel for="description" value="Description" />
+                        <InputLabel for="description" value="รายละเอียด" />
                         <textarea
                             id="description"
                             v-model="form.description"
@@ -257,7 +257,7 @@ const showCalculator = (vehicle) => {
 
             <template #footer>
                 <SecondaryButton @click="showingVehicleModal = false">
-                    Cancel
+                    ยกเลิก
                 </SecondaryButton>
                 <PrimaryButton
                     class="ml-3"
@@ -265,7 +265,7 @@ const showCalculator = (vehicle) => {
                     :disabled="form.processing"
                     @click="createVehicle"
                 >
-                    Create
+                    บันทึก
                 </PrimaryButton>
             </template>
         </DialogModal>
@@ -273,14 +273,14 @@ const showCalculator = (vehicle) => {
         <!-- Edit Vehicle Modal -->
         <DialogModal :show="editingVehicle" @close="editingVehicle = false">
             <template #title>
-                Edit Vehicle
+                แก้ไขรถยนต์
             </template>
 
             <template #content>
                 <div class="space-y-6">
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <div>
-                            <InputLabel for="edit-make" value="Make" />
+                            <InputLabel for="edit-make" value="ยี่ห้อ" />
                             <TextInput
                                 id="edit-make"
                                 v-model="editForm.make"
@@ -292,7 +292,7 @@ const showCalculator = (vehicle) => {
                         </div>
 
                         <div>
-                            <InputLabel for="edit-model" value="Model" />
+                            <InputLabel for="edit-model" value="รุ่น" />
                             <TextInput
                                 id="edit-model"
                                 v-model="editForm.model"
@@ -304,7 +304,7 @@ const showCalculator = (vehicle) => {
                         </div>
 
                         <div>
-                            <InputLabel for="edit-year" value="Year" />
+                            <InputLabel for="edit-year" value="ปี" />
                             <TextInput
                                 id="edit-year"
                                 v-model="editForm.year"
@@ -316,7 +316,7 @@ const showCalculator = (vehicle) => {
                         </div>
 
                         <div>
-                            <InputLabel for="edit-color" value="Color" />
+                            <InputLabel for="edit-color" value="สี" />
                             <TextInput
                                 id="edit-color"
                                 v-model="editForm.color"
@@ -328,7 +328,7 @@ const showCalculator = (vehicle) => {
                         </div>
 
                         <div>
-                            <InputLabel for="edit-price" value="Price" />
+                            <InputLabel for="edit-price" value="ราคา" />
                             <TextInput
                                 id="edit-price"
                                 v-model="editForm.price"
@@ -341,7 +341,7 @@ const showCalculator = (vehicle) => {
                         </div>
 
                         <div>
-                            <InputLabel for="edit-stock" value="Stock" />
+                            <InputLabel for="edit-stock" value="จำนวน" />
                             <TextInput
                                 id="edit-stock"
                                 v-model="editForm.stock"
@@ -354,7 +354,7 @@ const showCalculator = (vehicle) => {
                     </div>
 
                     <div>
-                        <InputLabel for="edit-description" value="Description" />
+                        <InputLabel for="edit-description" value="รายละเอียด" />
                         <textarea
                             id="edit-description"
                             v-model="editForm.description"
@@ -368,7 +368,7 @@ const showCalculator = (vehicle) => {
 
             <template #footer>
                 <SecondaryButton @click="editingVehicle = false">
-                    Cancel
+                    ยกเลิก
                 </SecondaryButton>
                 <PrimaryButton
                     class="ml-3"
@@ -376,7 +376,7 @@ const showCalculator = (vehicle) => {
                     :disabled="editForm.processing"
                     @click="updateVehicle"
                 >
-                    Update
+                    บันทึก
                 </PrimaryButton>
             </template>
         </DialogModal>
@@ -384,16 +384,16 @@ const showCalculator = (vehicle) => {
         <!-- Delete Vehicle Confirmation Modal -->
         <DialogModal :show="vehicleBeingDeleted" @close="vehicleBeingDeleted = null">
             <template #title>
-                Delete Vehicle
+                ลบรถยนต์
             </template>
 
             <template #content>
-                Are you sure you want to delete this vehicle?
+                คุณแน่ใจหรือไม่ที่จะลบรถยนต์คันนี้?
             </template>
 
             <template #footer>
                 <SecondaryButton @click="vehicleBeingDeleted = null">
-                    Cancel
+                    ยกเลิก
                 </SecondaryButton>
                 <DangerButton
                     class="ml-3"
@@ -401,7 +401,7 @@ const showCalculator = (vehicle) => {
                     :disabled="form.processing"
                     @click="deleteVehicle"
                 >
-                    Delete
+                    ลบ
                 </DangerButton>
             </template>
         </DialogModal>
@@ -409,7 +409,7 @@ const showCalculator = (vehicle) => {
         <!-- Installment Calculator Modal -->
         <DialogModal :show="showingCalculator" @close="showingCalculator = false">
             <template #title>
-                Calculate Installments for {{ selectedVehicle?.make }} {{ selectedVehicle?.model }}
+                คำนวณค่างวดสำหรับ {{ selectedVehicle?.make }} {{ selectedVehicle?.model }}
             </template>
 
             <template #content>
@@ -421,7 +421,7 @@ const showCalculator = (vehicle) => {
 
             <template #footer>
                 <SecondaryButton @click="showingCalculator = false">
-                    Close
+                    ปิด
                 </SecondaryButton>
             </template>
         </DialogModal>
