@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import Checkbox from '@/Components/Checkbox.vue';
@@ -7,10 +7,20 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { computed } from 'vue';
 
 defineProps({
     canResetPassword: Boolean,
     status: String,
+});
+
+const page = usePage();
+const errors = computed(() => {
+    if (page.props.errorBags?.default?.email) {
+        const error = page.props.errorBags.default.email;
+        return Array.isArray(error) ? error[0] : error;
+    }
+    return null;
 });
 
 const form = useForm({
@@ -50,6 +60,10 @@ const submit = () => {
 
             <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
                 {{ status }}
+            </div>
+
+            <div v-if="errors" class="mb-4 font-medium text-sm text-red-600">
+                {{ errors }}
             </div>
 
             <form @submit.prevent="submit">
