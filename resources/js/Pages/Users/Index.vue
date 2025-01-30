@@ -34,6 +34,7 @@ const editForm = useForm({
 const showingUserModal = ref(false);
 const editingUser = ref(false);
 const userBeingDeleted = ref(null);
+const userBeingReset = ref(null);
 
 const createUser = () => {
     if (form.roles.length === 0) {
@@ -86,19 +87,22 @@ const deleteUser = () => {
 };
 
 const resetUserData = (user) => {
-    if (confirm('Are you sure you want to reset this user\'s data?')) {
-        form.post(route('users.reset-data', user.id), {
-            preserveScroll: true,
-        });
-    }
+    userBeingReset.value = user;
+};
+
+const confirmResetData = () => {
+    form.post(route('users.reset-data', userBeingReset.value.id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            userBeingReset.value = null;
+        },
+    });
 };
 
 const toggleUserStatus = (user) => {
-    if (confirm(`Are you sure you want to ${user.is_active ? 'disable' : 'enable'} this user?`)) {
-        form.put(route('users.toggle-status', user.id), {
-            preserveScroll: true,
-        });
-    }
+    form.put(route('users.toggle-status', user.id), {
+        preserveScroll: true,
+    });
 };
 </script>
 
@@ -142,24 +146,60 @@ const toggleUserStatus = (user) => {
                                             class="text-indigo-600 hover:text-indigo-900 mr-4"
                                             @click="editUser(user)"
                                         >
-                                            แก้ไข
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                            </svg>
                                         </button>
                                         <button
                                             v-if="user.id !== props.currentUser.id"
                                             class="text-yellow-600 hover:text-yellow-900 mr-4"
                                             @click="resetUserData(user)"
                                         >
-                                            รีเซ็ตข้อมูล
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                            </svg>
                                         </button>
                                         <button
                                             v-if="user.id !== props.currentUser.id"
+                                            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none"
                                             :class="{
-                                                'text-red-600 hover:text-red-900': user.is_active,
-                                                'text-green-600 hover:text-green-900': !user.is_active
+                                                'bg-green-600 hover:bg-green-700': user.is_active,
+                                                'bg-red-600 hover:bg-red-700': !user.is_active
                                             }"
                                             @click="toggleUserStatus(user)"
                                         >
-                                            {{ user.is_active ? 'ปิดการใช้งาน' : 'เปิดการใช้งาน' }}
+                                            <span
+                                                class="pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                                                :class="{
+                                                    'translate-x-5': user.is_active,
+                                                    'translate-x-0': !user.is_active
+                                                }"
+                                            >
+                                                <span
+                                                    class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity"
+                                                    :class="{
+                                                        'opacity-0 duration-100 ease-out': user.is_active,
+                                                        'opacity-100 duration-200 ease-in': !user.is_active
+                                                    }"
+                                                    aria-hidden="true"
+                                                >
+                                                    <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 12 12">
+                                                        <path d="M7 6V3m0 0L5 5m2-2l2 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                                    </svg>
+                                                </span>
+                                                <span
+                                                    class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity"
+                                                    :class="{
+                                                        'opacity-100 duration-200 ease-in': user.is_active,
+                                                        'opacity-0 duration-100 ease-out': !user.is_active
+                                                    }"
+                                                    aria-hidden="true"
+                                                >
+                                                    <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 12 12">
+                                                        <path d="M5 6v3m0 0l2-2m-2 2L3 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                                    </svg>
+                                                </span>
+                                            </span>
                                         </button>
                                     </td>
                                 </tr>
@@ -327,6 +367,31 @@ const toggleUserStatus = (user) => {
                     @click="deleteUser"
                 >
                     ลบ
+                </DangerButton>
+            </template>
+        </DialogModal>
+
+        <!-- Reset User Data Confirmation Modal -->
+        <DialogModal :show="userBeingReset" @close="userBeingReset = null">
+            <template #title>
+                รีเซ็ตข้อมูลผู้ใช้
+            </template>
+
+            <template #content>
+                คุณแน่ใจหรือไม่ที่จะรีเซ็ตข้อมูลของผู้ใช้นี้?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="userBeingReset = null">
+                    ยกเลิก
+                </SecondaryButton>
+                <DangerButton
+                    class="ml-3"
+                    :class="{ 'opacity-25': form.processing }"
+                    :disabled="form.processing"
+                    @click="confirmResetData"
+                >
+                    รีเซ็ต
                 </DangerButton>
             </template>
         </DialogModal>
