@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends BaseController
 {
@@ -18,9 +19,12 @@ class UserController extends BaseController
 
     public function index()
     {
+        $users = User::with('roles')->get();
+        $roles = Role::all();
         return Inertia::render('Users/Index', [
-            'users' => User::with('roles')->get(),
-            'roles' => Role::all(),
+            'users' => $users,
+            'roles' => $roles,
+            'currentUser' => Auth::user(),
         ]);
     }
 
@@ -64,7 +68,7 @@ class UserController extends BaseController
 
     public function destroy(User $user)
     {
-        if ($user->id === auth()->id()) {
+        if ($user->id === Auth::id()) {
             return redirect()->back()->with('error', 'You cannot delete your own account.');
         }
 

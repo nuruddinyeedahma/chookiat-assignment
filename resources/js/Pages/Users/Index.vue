@@ -14,6 +14,7 @@ import Checkbox from '@/Components/Checkbox.vue';
 const props = defineProps({
     users: Array,
     roles: Array,
+    currentUser: Object,
 });
 
 const form = useForm({
@@ -128,6 +129,7 @@ const deleteUser = () => {
                                             แก้ไข
                                         </button>
                                         <button
+                                            v-if="user.id !== props.currentUser.id"
                                             class="text-red-600 hover:text-red-900"
                                             @click="confirmUserDeletion(user)"
                                         >
