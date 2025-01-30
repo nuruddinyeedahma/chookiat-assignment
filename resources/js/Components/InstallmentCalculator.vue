@@ -18,77 +18,58 @@ const selectedInstallment = ref('');
 const error = ref('');
 const calculationType = ref('flat'); // 'flat' or 'amortization'
 
-const validateLoanAmount = (event) => {
-    const value = event.target.value;
-
+// Common validation functions
+const validateNumericInput = (value, field, fieldRef) => {
     // Check for invalid characters (- or e) and clear immediately
     if (value.toLowerCase().includes('e') || value.includes('-')) {
         alert('ไม่สามารถป้อนเครื่องหมายลบหรือตัวอักษร');
-        loanAmount.value = 0;
-        event.target.value = 0;
-        return;
+        fieldRef.value = 0;
+        return false;
     }
 
     if (value === '') {
-        loanAmount.value = 0;
-        error.value = '';
-        return;
+        fieldRef.value = 0;
+        return true;
     }
 
     const number = parseFloat(value);
     if (isNaN(number)) {
         alert('กรุณาใส่ตัวเลขเท่านั้น');
-        loanAmount.value = 0;
-        event.target.value = 0;
-        return;
+        fieldRef.value = 0;
+        return false;
     }
 
-    error.value = '';
-    loanAmount.value = number;
+    fieldRef.value = number;
+    return true;
 };
 
-const preventInvalidInput = (event) => {
+const preventInvalidNumericInput = (event) => {
     // Prevent minus sign and 'e' character
     if (event.key === '-' || event.key.toLowerCase() === 'e') {
         alert('ไม่สามารถป้อนเครื่องหมายลบหรือตัวอักษร');
         event.preventDefault();
-        loanAmount.value = 0;
+        event.target.value = 0;
+        if (event.target.id === 'loan-amount') {
+            loanAmount.value = 0;
+        } else if (event.target.id === 'interest-rate') {
+            interestRate.value = 0;
+        }
+    }
+};
+
+const validateLoanAmount = (event) => {
+    const value = event.target.value;
+    if (validateNumericInput(value, 'loan', loanAmount)) {
+        error.value = '';
+    } else {
+        event.target.value = 0;
     }
 };
 
 const validateInterestRate = (event) => {
     const value = event.target.value;
-
-    // Check for invalid characters (- or e) and clear immediately
-    if (value.toLowerCase().includes('e') || value.includes('-')) {
-        alert('ไม่สามารถป้อนเครื่องหมายลบหรือตัวอักษร');
-        interestRate.value = 0;
+    if (!validateNumericInput(value, 'interest', interestRate)) {
         event.target.value = 0;
-        return;
-    }
-
-    if (value === '') {
-        interestRate.value = 0;
-        return;
-    }
-
-    const number = parseFloat(value);
-    if (isNaN(number)) {
-        alert('กรุณาใส่ตัวเลขเท่านั้น');
-        interestRate.value = 0;
-        event.target.value = 0;
-        return;
-    }
-
-    interestRate.value = number;
-};
-
-const preventInvalidInputInterest = (event) => {
-    // Prevent minus sign and 'e' character
-    if (event.key === '-' || event.key.toLowerCase() === 'e') {
-        alert('ไม่สามารถป้อนเครื่องหมายลบหรือตัวอักษร');
-        event.preventDefault();
-        interestRate.value = 0;
     }
 };
 
@@ -158,7 +139,7 @@ const clearForm = () => {
                     class="mt-1 block w-full"
                     v-model="loanAmount"
                     @input="validateLoanAmount($event)"
-                    @keydown="preventInvalidInput"
+                    @keydown="preventInvalidNumericInput"
                 />
                 <InputError :message="error" class="mt-2" />
             </div>
@@ -173,7 +154,7 @@ const clearForm = () => {
                     step="0.01"
                     class="mt-1 block w-full"
                     @input="validateInterestRate($event)"
-                    @keydown="preventInvalidInputInterest"
+                    @keydown="preventInvalidNumericInput"
                 />
             </div>
 
