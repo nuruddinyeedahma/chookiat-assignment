@@ -50,7 +50,7 @@ const stats = [
 
                 <!-- Quick Actions -->
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 mb-8">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">การดำเนินการด่วน</h3>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">เมนูลัด</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <Link
                             :href="route('vehicles.create')"

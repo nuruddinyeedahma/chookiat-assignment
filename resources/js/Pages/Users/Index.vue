@@ -86,10 +86,10 @@ const deleteUser = () => {
 </script>
 
 <template>
-    <AppLayout title="User Management">
+    <AppLayout title="การจัดการผู้ใช้">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                User Management
+                การจัดการผู้ใช้
             </h2>
         </template>
 
@@ -98,7 +98,7 @@ const deleteUser = () => {
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
                     <div class="flex justify-end mb-6">
                         <PrimaryButton @click="showingUserModal = true">
-                            Add User
+                            เพิ่มผู้ใช้
                         </PrimaryButton>
                     </div>
 
@@ -107,10 +107,10 @@ const deleteUser = () => {
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead>
                                 <tr>
-                                    <th class="px-6 py-3 bg-gray-50 text-left">Name</th>
-                                    <th class="px-6 py-3 bg-gray-50 text-left">Email</th>
-                                    <th class="px-6 py-3 bg-gray-50 text-left">Roles</th>
-                                    <th class="px-6 py-3 bg-gray-50 text-left">Actions</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-left">ชื่อ</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-left">อีเมล</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-left">บทบาท</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-left">การดำเนินการ</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -125,13 +125,13 @@ const deleteUser = () => {
                                             class="text-indigo-600 hover:text-indigo-900 mr-4"
                                             @click="editUser(user)"
                                         >
-                                            Edit
+                                            แก้ไข
                                         </button>
                                         <button
                                             class="text-red-600 hover:text-red-900"
                                             @click="confirmUserDeletion(user)"
                                         >
-                                            Delete
+                                            ลบ
                                         </button>
                                     </td>
                                 </tr>
@@ -145,13 +145,13 @@ const deleteUser = () => {
         <!-- Create User Modal -->
         <DialogModal :show="showingUserModal" @close="showingUserModal = false">
             <template #title>
-                Create User
+                เพิ่มผู้ใช้
             </template>
 
             <template #content>
                 <div class="space-y-6">
                     <div>
-                        <InputLabel for="name" value="Name" />
+                        <InputLabel for="name" value="ชื่อ" />
                         <TextInput
                             id="name"
                             v-model="form.name"
@@ -163,7 +163,7 @@ const deleteUser = () => {
                     </div>
 
                     <div>
-                        <InputLabel for="email" value="Email" />
+                        <InputLabel for="email" value="อีเมล" />
                         <TextInput
                             id="email"
                             v-model="form.email"
@@ -175,7 +175,7 @@ const deleteUser = () => {
                     </div>
 
                     <div>
-                        <InputLabel for="password" value="Password" />
+                        <InputLabel for="password" value="รหัสผ่าน" />
                         <TextInput
                             id="password"
                             v-model="form.password"
@@ -187,7 +187,7 @@ const deleteUser = () => {
                     </div>
 
                     <div>
-                        <InputLabel value="Roles" />
+                        <InputLabel value="บทบาท" />
                         <div class="mt-2 space-y-2">
                             <div v-for="role in roles" :key="role.name">
                                 <label class="flex items-center">
@@ -203,7 +203,7 @@ const deleteUser = () => {
 
             <template #footer>
                 <SecondaryButton @click="showingUserModal = false">
-                    Cancel
+                    ยกเลิก
                 </SecondaryButton>
                 <PrimaryButton
                     class="ml-3"
@@ -211,7 +211,7 @@ const deleteUser = () => {
                     :disabled="form.processing"
                     @click="createUser"
                 >
-                    Create
+                    สร้าง
                 </PrimaryButton>
             </template>
         </DialogModal>
@@ -219,13 +219,13 @@ const deleteUser = () => {
         <!-- Edit User Modal -->
         <DialogModal :show="editingUser" @close="editingUser = false">
             <template #title>
-                Edit User
+                แก้ไขผู้ใช้
             </template>
 
             <template #content>
                 <div class="space-y-6">
                     <div>
-                        <InputLabel for="edit-name" value="Name" />
+                        <InputLabel for="edit-name" value="ชื่อ" />
                         <TextInput
                             id="edit-name"
                             v-model="editForm.name"
@@ -237,7 +237,7 @@ const deleteUser = () => {
                     </div>
 
                     <div>
-                        <InputLabel for="edit-email" value="Email" />
+                        <InputLabel for="edit-email" value="อีเมล" />
                         <TextInput
                             id="edit-email"
                             v-model="editForm.email"
@@ -249,7 +249,7 @@ const deleteUser = () => {
                     </div>
 
                     <div>
-                        <InputLabel value="Roles" />
+                        <InputLabel value="บทบาท" />
                         <div class="mt-2 space-y-2">
                             <div v-for="role in roles" :key="role.name">
                                 <label class="flex items-center">
@@ -265,7 +265,7 @@ const deleteUser = () => {
 
             <template #footer>
                 <SecondaryButton @click="editingUser = false">
-                    Cancel
+                    ยกเลิก
                 </SecondaryButton>
                 <PrimaryButton
                     class="ml-3"
@@ -273,7 +273,7 @@ const deleteUser = () => {
                     :disabled="editForm.processing"
                     @click="updateUser"
                 >
-                    Update
+                    อัปเดต
                 </PrimaryButton>
             </template>
         </DialogModal>
@@ -281,16 +281,16 @@ const deleteUser = () => {
         <!-- Delete User Confirmation Modal -->
         <DialogModal :show="userBeingDeleted" @close="userBeingDeleted = null">
             <template #title>
-                Delete User
+                ลบผู้ใช้
             </template>
 
             <template #content>
-                Are you sure you want to delete this user?
+                คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้?
             </template>
 
             <template #footer>
                 <SecondaryButton @click="userBeingDeleted = null">
-                    Cancel
+                    ยกเลิก
                 </SecondaryButton>
                 <DangerButton
                     class="ml-3"
@@ -298,7 +298,7 @@ const deleteUser = () => {
                     :disabled="form.processing"
                     @click="deleteUser"
                 >
-                    Delete
+                    ลบ
                 </DangerButton>
             </template>
         </DialogModal>
